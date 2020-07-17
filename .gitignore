@@ -1,0 +1,12 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+
+de_novo_miRNA/
+
+raw_data/
+
+nohup\.out
+
+\.snakemake/log/

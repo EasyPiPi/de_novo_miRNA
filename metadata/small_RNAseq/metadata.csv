@@ -1,0 +1,26 @@
+run,sample,organism,source_name,tissue,species
+SRR069836,GSM286602,Drosophila melanogaster,Drosophila melanogaster male body,male_body,dme
+SRR016854,dmel_male_body,Drosophila melanogaster,NA,male_body,dme
+SRR060643,GSM548582,Drosophila melanogaster,testes,testes,dme
+SRR060645,GSM548584,Drosophila melanogaster,testes,testes,dme
+SRR060650,GSM548589,Drosophila melanogaster,testes,testes,dme
+SRR060652,GSM548591,Drosophila melanogaster,testes,testes,dme
+SRR060657,GSM548597,Drosophila virilis,testes,testes,dvi
+SRR060659,GSM548599,Drosophila virilis,testes,testes,dvi
+SRR060664,GSM548604,Drosophila virilis,carcasses,male_body,dvi
+SRR060666,GSM548606,Drosophila virilis,carcasses,male_body,dvi
+SRR060670,GSM548610,Drosophila virilis,testes,testes,dvi
+SRR060683,GSM548623,Drosophila virilis,testes,testes,dvi
+SRR016854,dmel_male_body,Drosophila melanogaster,NA,male_body,dme
+SRR453265,GSM909277,Drosophila melanogaster,D. melanogaster testes_1 day,testes,dme
+SRR453266,GSM909278,Drosophila melanogaster,D. melanogaster testes_30 day,testes,dme
+SRR902009,GSM1165053,Drosophila simulans,Drosophila simulans testes,testes,dsi
+SRR1205790,GSM1357618,Drosophila simulans,male bodies,male_body,dsi
+SRR1205791,GSM1357619,Drosophila sechellia,male bodies,male_body,dse
+SRR1205793,GSM1357621,Drosophila erecta,male bodies,male_body,der
+SRR5410380,GSM2562975,Drosophila melanogaster,Z56 testes,testes,dme
+SRR5461108,GSM2585526,Drosophila simulans,D. simulans testis small RNA,testes,dsi
+SRR5461110,GSM2585528,Drosophila virilis,D. virilis male body small RNA,male_body,dvi
+SRR5461113,GSM2585531,Drosophila virilis,D. virilis male body small RNA,male_body,dvi
+SRR6667443,GSM2977400,Drosophila erecta,testes,testes,der
+SRR6667444,GSM2977401,Drosophila sechellia,testes,testes,dse

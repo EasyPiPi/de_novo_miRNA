@@ -1,0 +1,41 @@
+# The name of the environment
+name: de_novo_miRNA
+# The relevent channels
+channels:
+- conda-forge
+- bioconda
+dependencies:
+- snakemake-minimal
+# Python
+- python=3.7
+- pandas
+- numpy
+- spyder=3.3.6
+# R
+- r-base =3.6.1
+- rstudio
+- bioconductor-biomart
+- bioconductor-complexheatmap
+- bioconductor-deseq2
+- bioconductor-genomicfeatures
+- bioconductor-genomicranges
+- bioconductor-gviz
+- bioconductor-topgo
+- bioconductor-rtracklayer
+- bioconductor-sradb
+- r-devtools
+- r-pheatmap
+- r-tidyverse
+- r-corrr
+- r-skimr
+- r-cowplot
+- r-ggpubr
+- r-rcolorbrewer
+- r-stringi
+# Bioinformatics tools
+- hisat2
+- stringtie
+- cutadapt
+- samtools
+- sra-tools
+- multiqc
