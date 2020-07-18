@@ -46,14 +46,14 @@ shared_cols <-
            intersect)
 
 # select subset cols
-sel_cols <- c("Run", "Sample Name", "Organism", "source_name", "tissue")
+sel_cols <- c("Run", "GEO_Accession (exp)", "Organism", "source_name", "tissue")
 gse_all <- bind_rows(gse11624, gse15898, gse22067, gse24304, gse37041,
                      gse48017, gse56244, gse97364, gse98013, gse110086)
 
 # gse_all <-
 gse_all <- gse_all %>%
     select(all_of(sel_cols)) %>%
-    rename(run = "Run", sample = "Sample Name", organism = "Organism") %>%
+    rename(run = "Run", sample = "GEO_Accession (exp)", organism = "Organism") %>%
     mutate(tissue = case_when(
         (tissue == "testes" | tissue == "testis") ~ "testes",
         TRUE ~ "male_body"
@@ -65,7 +65,7 @@ gse_all <- gse_all %>%
         organism == "Drosophila erecta" ~ "der",
         organism == "Drosophila virilis" ~ "dvi"
 
-    ))
+    )) %>% base::unique()
 
 gse_sample_num <- gse_all %>%
     count(organism, tissue) %>%

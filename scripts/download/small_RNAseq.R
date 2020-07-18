@@ -24,13 +24,13 @@ if (file.exists(file.path(sql_dir, "SRAmetadb.sqlite"))) {
 }
 
 sra_con <- dbConnect(SQLite(),sqlfile)
-
 # download files one by one
 for (accession in sra_accessions) {
     if (!file.exists(paste0(file.path(fastq_dir, accession), ".fastq.gz"))) {
-        print(accession)
-        getSRAfile(accession, destDir = fastq_dir,
-                   sra_con, fileType = 'fastq', makeDirectory = TRUE)
+        print(paste('Now is downloading', accession))
+        try(getSRAfile(accession, destDir = fastq_dir,
+                   sra_con, fileType = 'fastq', makeDirectory = TRUE))
+
     }
 }
 

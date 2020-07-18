@@ -9,4 +9,6 @@ raw_data/
 
 nohup\.out
 
-\.snakemake/log/
+\.snakemake/
+
+indicator/

@@ -10,7 +10,7 @@ metadata_small_RNAseq = pd.read_csv("metadata/small_RNAseq/metadata.csv", dtype=
 rule all:
     input:
         #### download ####
-        "indicator/download/small_RNAseq.complete"
+        "indicator/download/small_RNAseq/all.done"
 
 ##### load rules #####
 include: "rules/download.smk"
