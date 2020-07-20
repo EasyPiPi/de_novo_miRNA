@@ -6,7 +6,11 @@ This is a repository of data analysis for [Zhao et al.](https://www.biorxiv.org/
 
  ## Tools
  [mirPRo](https://sourceforge.net/projects/mirpro/)
+
  [mirpipe](https://github.com/loosolab/mirpipe)
+
  [miRDeep2](https://www.mdc-berlin.de/content/mirdeep2-documentation)
+
  [CAP-miRSeq](https://bmcgenomics.biomedcentral.com/articles/10.1186/1471-2164-15-423)
+ 
  [Prost!](https://prost.readthedocs.io/en/latest/)
