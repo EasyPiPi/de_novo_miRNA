@@ -1,2 +1,6 @@
 small_RNAseq:
     "/home/yixin/Desktop/github_repo/de_novo_miRNA/raw_data/small_RNAseq"
+miRBase_mature:
+    "ftp://mirbase.org/pub/mirbase/22.1/mature.fa.gz"
+miRBase_hairpin:
+    "ftp://mirbase.org/pub/mirbase/22.1/hairpin.fa.gz"
