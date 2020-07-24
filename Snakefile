@@ -18,7 +18,8 @@ rule all:
         "indicator/download/miRNA_sequence/miRNA_sequence.done",
         "indicator/download/annotation/all.done",
         #### miRDeep2 ####
-        expand("raw_data/small_RNAseq/trim_galore/{run}_trimmed.fq.gz", run = metadata_small_RNAseq.run),
+        expand("raw_data/small_RNAseq/trim_galore/{run}_trimmed.fq", run = metadata_small_RNAseq.run),
+        expand("indicator/miRDeep2/bowtie_build/{species}.done", species = metadata_annotation.index)
 
 ##### load rules #####
 include: "rules/download.smk"
