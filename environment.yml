@@ -39,3 +39,4 @@ dependencies:
 - samtools
 - sra-tools
 - multiqc
+- mirdeep2

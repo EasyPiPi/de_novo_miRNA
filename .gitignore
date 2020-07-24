@@ -12,3 +12,5 @@ nohup\.out
 \.snakemake/
 
 indicator/
+
+mapper_logs/
