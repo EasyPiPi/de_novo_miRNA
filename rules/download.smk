@@ -12,7 +12,7 @@ rule download_small_RNAseq:
     output:
         touch("indicator/download/small_RNAseq/{run}.done")
     params:
-        dir = config["small_RNAseq"],
+        dir = os.path.join(config["root_dir"], "raw_data/small_RNAseq"),
         run = "{run}"
     shell:
         """

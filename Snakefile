@@ -21,7 +21,7 @@ rule all:
         "indicator/download/miRNA_sequence/miRNA_sequence.done",
         "indicator/download/annotation/all.done",
         #### miRDeep2 ####
-        expand("raw_data/small_RNAseq/miRDeep2/{run}/reads.fa", run = metadata_small_RNAseq.run),
+        expand("indicator/miRDeep2/quantifier/{run}.done", run = metadata_small_RNAseq.run),
 
 ##### load rules #####
 include: "rules/download.smk"
