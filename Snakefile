@@ -20,6 +20,8 @@ rule all:
         "indicator/download/small_RNAseq/all.done",
         "indicator/download/miRNA_sequence/miRNA_sequence.done",
         "indicator/download/annotation/all.done",
+        #### QC ####
+        expand("outputs/qc/fastqc/{run}.html", run = metadata_small_RNAseq.run),
         #### miRDeep2 ####
         expand("indicator/miRDeep2/quantifier/{run}.done", run = metadata_small_RNAseq.run),
 

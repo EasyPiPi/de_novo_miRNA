@@ -2,11 +2,12 @@
 .Rhistory
 .RData
 .Ruserdata
-de_novo_miRNA/
-raw_data/
-nohup\.out
 \.snakemake/
+de_novo_miRNA/
 indicator/
-mapper_logs/
 logs/
 outputs/
+raw_data/
+Adapter_backup.fa
+mapper_logs/
+nohup\.out

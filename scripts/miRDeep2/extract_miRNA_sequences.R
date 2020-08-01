@@ -1,7 +1,7 @@
-library(seqinr)
-library(stringr)
-library(tibble)
-library(purrr)
+suppressWarnings(library(seqinr))
+suppressWarnings(library(stringr))
+suppressWarnings(library(tibble))
+suppressWarnings(library(purrr))
 
 # hairpin_file <- "/home/yixin/Desktop/github_repo/de_novo_miRNA/external_resources/miRNA/hairpin.fa"
 # mature_file <- "/home/yixin/Desktop/github_repo/de_novo_miRNA/external_resources/miRNA/mature.fa"
@@ -12,6 +12,8 @@ hairpin_file <- snakemake@params[["hairpin"]]
 mature_file <- snakemake@params[["mature"]]
 species <- snakemake@params[["species"]]
 output_dir <- snakemake@params[["output_dir"]]
+
+dir.create(output_dir, showWarnings = FALSE, recursive = TRUE)
 
 hairpin <- read.fasta(hairpin_file, forceDNAtolower = FALSE, as.string = TRUE)
 mature <- read.fasta(mature_file, forceDNAtolower = FALSE, as.string = TRUE)
