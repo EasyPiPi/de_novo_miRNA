@@ -72,7 +72,7 @@ rule miRDeep2_mapper:
         fastq = rules.trimmomatic.output
     params:
         # genome = lambda wildcards: os.path.join("external_resources", metadata_small_RNAseq.loc[wildcards.run, "species"], "genome"),
-        others = "-e -h -i -j -l 10 -m -v -n"
+        others = "-e -h -i -j -l 18 -m -v -n"
     output:
         fasta = "raw_data/small_RNAseq/miRDeep2/{run}/reads.fa"
         # arf = "raw_data/small_RNAseq/miRDeep2/{run}/reads_vs_genome.arf"
