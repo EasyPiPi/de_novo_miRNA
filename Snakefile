@@ -23,7 +23,7 @@ rule all:
         #### QC ####
         expand("outputs/qc/fastqc/{run}.html", run = metadata_small_RNAseq.run),
         #### miRDeep2 ####
-        expand("indicator/miRDeep2/quantifier/{run}.done", run = metadata_small_RNAseq.run),
+        "indicator/miRDeep2/analyze_miRNA_expression/all.done"
 
 ##### load rules #####
 include: "rules/download.smk"

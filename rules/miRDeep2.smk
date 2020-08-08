@@ -107,3 +107,24 @@ rule miRDeep2_quantifier:
         cd {params.output_dir}
         quantifier.pl -p {params.hairpin} -m {params.mature} -r {params.reads} -t {params.species} {params.others}
         """
+
+rule miRDeep2_quantifier_complete:
+    input:
+        expand("indicator/miRDeep2/quantifier/{run}.done", run = metadata_small_RNAseq.run)
+    output:
+        touch("indicator/miRDeep2/quantifier/all.done")
+
+rule analyze_miRNA_expression:
+    input:
+        complete = rules.miRDeep2_quantifier_complete.output,
+        metadata = 'metadata/small_RNAseq/metadata.csv',
+        ortholog = 'external_resources/Mohammed_et_al/Supplemental_Table_S4.xlsx',
+        classification = 'external_resources/Lyu_et_al/table_S8.csv'
+    params:
+        figure_out_dir = 'outputs/miRDeep2/figure',
+        miR_expression_dir = 'outputs/miRDeep2/quantifier'
+
+    output:
+        touch("indicator/miRDeep2/analyze_miRNA_expression/all.done")
+    script:
+        "../scripts/miRDeep2/analyze_miRNA_expression.R"
