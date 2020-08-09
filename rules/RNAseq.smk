@@ -21,12 +21,12 @@ rule cutadapt:
 # Build index
 rule salmon_index:
     input:
-        "/sonas-hs/siepel/nlsas/data/home/yizhao/projects/Snakemake_projects/miRNA/miR983_975/cdna/{cdna}.cdna.all.filter.fa"
+        "external_resources/{species}/cdna.fasta"
     output:
-        directory("salmon/{cdna}_index")
+        directory("external_resources/{species}/salmon_index")
     log:
-        "logs/salmon/{cdna}_index.log"
-    threads: 2
+        "logs/salmon/{species}_index.log"
+    threads: 4
     params:
         # optional parameters
         extra=""
@@ -36,19 +36,19 @@ rule salmon_index:
 # Quantification
 rule salmon_quant_reads:
     input:
-        r1 = "/local1/home/yizhao/download/miRNA/trimmed/{sample}_combined_R1.fastq.gz",
-        r2 = "/local1/home/yizhao/download/miRNA/trimmed/{sample}_combined_R2.fastq.gz",
-        index = "/sonas-hs/siepel/nlsas/data/home/yizhao/projects/Snakemake_projects/miRNA/miR983_975/salmon/{species_index}"
+        r1 = rules.cutadapt.output.fastq1,
+        r2 = rules.cutadapt.output.fastq2,
+        index = "external_resources/{species}/salmon_index"
     output:
-        quant = '/sonas-hs/siepel/nlsas/data/home/yizhao/projects/Snakemake_projects/miRNA/miR983_975/salmon/{species_index}/{sample}/quant.sf',
-        lib = '/sonas-hs/siepel/nlsas/data/home/yizhao/projects/Snakemake_projects/miRNA/miR983_975/salmon/{species_index}/{sample}/lib_format_counts.json'
+        quant = 'outputs/salmon/{species}/{sample}/quant.sf',
+        lib = 'outputs/salmon/{species}/{sample}/lib_format_counts.json'
     log:
-        'logs/salmon/{species_index}/{sample}.log'
+        'logs/salmon/{species}/{sample}.log'
     params:
         # optional parameters
         libtype ="A",
         #zip_ext = bz2 # req'd for bz2 files ('bz2'); optional for gz files('gz')
-        extra="--seqBias --gcBias"
-    threads: 2
+        extra = "" # --seqBias --gcBias
+    threads: 4
     wrapper:
-        "0.36.0/bio/salmon/quant"
+        "0.64.0/bio/salmon/quant"

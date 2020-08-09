@@ -5,13 +5,17 @@ import pandas as pd
 import numpy as np
 
 ##### metadata #####
+metadata_annotation = pd.read_csv("metadata/annotation/metadata.csv", dtype=str)
+metadata_annotation.set_index("species", drop = False, inplace = True)
+metadata_annotation.sort_index(inplace = True)
+
 metadata_small_RNAseq = pd.read_csv("metadata/small_RNAseq/metadata.csv", dtype=str)
 metadata_small_RNAseq.set_index("run", drop = False, inplace = True)
 metadata_small_RNAseq.sort_index(inplace = True)
 
-metadata_annotation = pd.read_csv("metadata/annotation/metadata.csv", dtype=str)
-metadata_annotation.set_index("species", drop = False, inplace = True)
-metadata_annotation.sort_index(inplace = True)
+metadata_RNAseq = pd.read_csv("metadata/RNAseq/metadata.csv", dtype=str)
+metadata_RNAseq.set_index("sample", drop = False, inplace = True)
+metadata_RNAseq.sort_index(inplace = True)
 
 #### main rule ####
 rule all:
@@ -23,8 +27,11 @@ rule all:
         #### QC ####
         expand("outputs/qc/fastqc/{run}.html", run = metadata_small_RNAseq.run),
         #### miRDeep2 ####
-        "indicator/miRDeep2/analyze_miRNA_expression/all.done"
+        "indicator/miRDeep2/analyze_miRNA_expression/all.done",
+        #### salmon ####
+        expand("outputs/salmon/{df.species}/{df.sample}/quant.sf", df = metadata_RNAseq.itertuples())
 
 ##### load rules #####
 include: "rules/download.smk"
 include: "rules/miRDeep2.smk"
+include: "rules/RNAseq.smk"
