@@ -21,6 +21,7 @@ dependencies:
 - bioconductor-genomicranges
 - bioconductor-gviz
 - bioconductor-topgo
+- bioconductor-tximport
 - bioconductor-rtracklayer
 - bioconductor-sradb
 - r-devtools
