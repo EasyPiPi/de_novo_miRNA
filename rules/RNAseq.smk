@@ -1,21 +1,21 @@
 # Trim adapters
 rule cutadapt:
     input:
-        ["/local1/home/yizhao/download/miRNA/{sample}_combined_R1.fastq.gz", "/local1/home/yizhao/download/miRNA/{sample}_combined_R2.fastq.gz"]
+        ["raw_data/RNAseq/{sample}_combined_R1.fastq.gz", "raw_data/RNAseq/{sample}_combined_R2.fastq.gz"]
     output:
-        fastq1="/local1/home/yizhao/download/miRNA/trimmed/{sample}_combined_R1.fastq.gz",
-        fastq2="/local1/home/yizhao/download/miRNA/trimmed/{sample}_combined_R2.fastq.gz",
-        qc="trimmed/{sample}.qc.txt"
+        fastq1="raw_data/RNAseq/trimmed/{sample}_combined_R1.fastq.gz",
+        fastq2="raw_data/RNAseq/trimmed/{sample}_combined_R2.fastq.gz",
+        qc="outputs/qc/cutadapt/{sample}.qc.txt"
     params:
         # https://cutadapt.readthedocs.io/en/stable/guide.html#adapter-types
-        adapters_r1 = "-a AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC",
-        adapters_r2 = "-A AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT",
+        adapters = "-a AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC -A AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT",
         # https://cutadapt.readthedocs.io/en/stable/guide.html#
-        others = "--minimum-length 1 -q 20 --cores=4"
+        others = "--minimum-length 1 -q 20"
     log:
         "logs/cutadapt/{sample}.log"
+    threads: 4 # set desired number of threads here
     wrapper:
-        "0.36.0/bio/cutadapt/pe"
+        "0.64.0/bio/cutadapt/pe"
 
 # Salmon quantification
 # Build index
@@ -31,7 +31,7 @@ rule salmon_index:
         # optional parameters
         extra=""
     wrapper:
-        "0.36.0/bio/salmon/index"
+        "0.64.0/bio/salmon/index"
 
 # Quantification
 rule salmon_quant_reads:

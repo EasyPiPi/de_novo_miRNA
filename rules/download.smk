@@ -66,6 +66,17 @@ rule download_genome_miRNA_fasta:
         wget -O - {params.miRNA} | gunzip -c > {output.miRNA}
         """
 
+rule download_cdna_fasta:
+    output:
+        cdna = "external_resources/{species}/cdna.fasta"
+    params:
+        cdna = lambda wildcards: metadata_annotation.loc[wildcards.species, "cdna"]
+    threads:1
+    shell:
+        """
+        wget -O - {params.cdna} | gunzip -c > {output.cdna}
+        """
+
 rule download_utr_gff_gtf:
     output:
         utr3 = "external_resources/{species}/utr3.fasta",
@@ -87,6 +98,7 @@ rule download_annotation_complete:
     input:
         expand("external_resources/{species}/miRNA.gff3", species = metadata_annotation.index),
         expand("external_resources/{species}/genome.fasta", species = metadata_annotation.index),
-        expand("external_resources/{species}/all.gff", species = ["dme", "dsi"])
+        expand("external_resources/{species}/all.gff", species = ["dme", "dsi"]),
+        expand("external_resources/{species}/cdna.fasta", species = ["dme", "dsi"])
     output:
         touch("indicator/download/annotation/all.done")

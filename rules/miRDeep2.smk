@@ -11,19 +11,6 @@ rule fastqc:
     wrapper:
         "0.63.0/bio/fastqc"
 
-# rule trim_galore_se:
-#     input:
-#         "raw_data/small_RNAseq/{run}.fastq.gz"
-#     output:
-#         "raw_data/small_RNAseq/trim_galore/{run}_trimmed.fq",
-#         "raw_data/small_RNAseq/trim_galore/{run}.fastq.gz_trimming_report.txt"
-#     params:
-#         extra="--illumina -q 20 --length 18 --dont_gzip"
-#     log:
-#         "logs/trim_galore/{run}.log"
-#     wrapper:
-#         "0.63.0/bio/trim_galore/se"
-
 rule trimmomatic:
     input:
         "raw_data/small_RNAseq/{run}.fastq.gz"  # input and output can be uncompressed or compressed
@@ -35,8 +22,6 @@ rule trimmomatic:
         # list of trimmers (see manual)
         trimmer=["ILLUMINACLIP:Adapter.fa:2:30:10", "LEADING:3", "TRAILING:3", "SLIDINGWINDOW:4:15",
         "MINLEN:10"],
-        # ,
-        # optional parameters
         extra="",
         # optional compression levels from -0 to -9 and -11
         compression_level="-9"
