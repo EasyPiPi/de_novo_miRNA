@@ -28,16 +28,16 @@ dsim_tx2gene <- merge.data.frame(tx2gene, dsim2dmel_1to1_ortholog[,c("ensembl_ge
 dsim_tx2gene <- dsim_tx2gene[, c("V2", "dmelanogaster_eg_homolog_ensembl_gene")]
 
 
-
-
+library(tximport)
+library(DESeq2)
 
 ################################################################################
 # D. melanogaster
 # prepare file diectory for reading expression files
-dir <- '/home/yixin/Desktop/project_data/miR983_975/all/salmon/dmel_index'
+dir <- '/home/yixin/Desktop/github_repo/de_novo_miRNA/outputs/salmon/dme'
 dmfiles <- grep("DM", list.files(dir), value = T)
 # remove dm975 KO 2 from further analysis
-dmfiles <- dmfiles[dmfiles != "DM975KO2"]
+# dmfiles <- dmfiles[dmfiles != "DM975KO2"]
 # RNA-seq expression
 files <- file.path(dir, dmfiles, "quant.sf")
 # read in rnaseq files
