@@ -94,11 +94,26 @@ rule download_utr_gff_gtf:
         wget -O - {params.gtf} | gunzip -c > {output.gtf}
         """
 
+rule download_flybase_info:
+    output:
+        tx2gene = "external_resources/flybase/fbgn_fbtr_fbpp_expanded_fb_2020_03.tsv",
+        ortholog = "external_resources/flybase/dmel_orthologs_in_drosophila_species_fb_2020_03.tsv"
+    params:
+        tx2gene = config["tx2gene"],
+        ortholog = config["ortholog"]
+    threads:1
+    shell:
+        """
+        wget -O - {params.tx2gene} | gunzip -c > {output.tx2gene}
+        wget -O - {params.ortholog} | gunzip -c > {output.ortholog}
+        """
+
 rule download_annotation_complete:
     input:
         expand("external_resources/{species}/miRNA.gff3", species = metadata_annotation.index),
         expand("external_resources/{species}/genome.fasta", species = metadata_annotation.index),
         expand("external_resources/{species}/all.gff", species = ["dme", "dsi"]),
-        expand("external_resources/{species}/cdna.fasta", species = ["dme", "dsi"])
+        expand("external_resources/{species}/cdna.fasta", species = ["dme", "dsi"]),
+        rules.download_flybase_info.output.tx2gene
     output:
         touch("indicator/download/annotation/all.done")

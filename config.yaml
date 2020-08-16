@@ -4,3 +4,7 @@ miRBase_mature:
     "ftp://mirbase.org/pub/mirbase/22.1/mature.fa.gz"
 miRBase_hairpin:
     "ftp://mirbase.org/pub/mirbase/22.1/hairpin.fa.gz"
+tx2gene:
+    "ftp://ftp.flybase.org/releases/FB2020_03/precomputed_files/genes/fbgn_fbtr_fbpp_expanded_fb_2020_03.tsv.gz"
+ortholog:
+    "ftp://ftp.flybase.org/releases/FB2020_03/precomputed_files/orthologs/dmel_orthologs_in_drosophila_species_fb_2020_03.tsv.gz"
