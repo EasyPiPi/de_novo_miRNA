@@ -14,6 +14,7 @@ dependencies:
 # R
 - r-base =3.6.1
 - rstudio
+- bioconductor-apeglm
 - bioconductor-biomart
 - bioconductor-complexheatmap
 - bioconductor-deseq2
@@ -31,6 +32,7 @@ dependencies:
 - r-skimr
 - r-cowplot
 - r-ggpubr
+- r-ggally
 - r-rcolorbrewer
 - r-stringi
 - r-seqinr

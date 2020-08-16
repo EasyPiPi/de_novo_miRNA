@@ -26,10 +26,10 @@ rule all:
         "indicator/download/annotation/all.done",
         #### QC ####
         expand("outputs/qc/fastqc/{run}.html", run = metadata_small_RNAseq.run),
-        #### miRDeep2 ####
+        #### small RNA-seq analysis ####
         "indicator/miRDeep2/analyze_miRNA_expression/all.done",
-        #### salmon ####
-        expand("outputs/salmon/{df.species}/{df.sample}/quant.sf", df = metadata_RNAseq.itertuples())
+        #### RNA-seq analysis ####
+        "indicator/DESeq2/all.done",
 
 ##### load rules #####
 include: "rules/download.smk"

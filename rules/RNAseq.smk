@@ -52,3 +52,16 @@ rule salmon_quant_reads:
     threads: 4
     wrapper:
         "0.64.0/bio/salmon/quant"
+
+# run DESeq2
+rule deseq2:
+    input:
+        expand("outputs/salmon/{df.species}/{df.sample}/quant.sf", df = metadata_RNAseq.itertuples()),
+        rules.download_annotation_complete.output
+    params:
+        root_dir = config["root_dir"]
+    output:
+        touch("indicator/DESeq2/all.done")
+    threads: 4
+    script:
+        "../scripts/RNAseq/deseq2.R"

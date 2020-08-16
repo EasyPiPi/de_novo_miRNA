@@ -108,7 +108,6 @@ rule analyze_miRNA_expression:
     params:
         figure_out_dir = 'outputs/miRDeep2/figure',
         miR_expression_dir = 'outputs/miRDeep2/quantifier'
-
     output:
         touch("indicator/miRDeep2/analyze_miRNA_expression/all.done")
     script:
