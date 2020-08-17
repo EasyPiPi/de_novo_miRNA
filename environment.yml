@@ -36,6 +36,7 @@ dependencies:
 - r-rcolorbrewer
 - r-stringi
 - r-seqinr
+- r-naniar
 # Bioinformatics tools
 - adapterremoval
 - hisat2
