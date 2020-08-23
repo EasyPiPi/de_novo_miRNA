@@ -10,6 +10,7 @@ suppressMessages(suppressWarnings(library(GGally)))
 # setDTthreads(threads = 4)
 setDTthreads(threads = snakemake@threads[[1]])
 root_dir <- snakemake@params[["root_dir"]]
+
 external_dir <- file.path(root_dir, "external_resources")
 salmon_dir <- file.path(root_dir, 'outputs/salmon')
 output_dir <- file.path(root_dir, 'outputs/expression')
@@ -37,6 +38,9 @@ make_tx2gene <- function(species) {
 
 tx2gene_dme <- make_tx2gene("dme")
 tx2gene_dsi <- make_tx2gene("dsi")
+
+fwrite(tx2gene_dme, file.path(external_dir, "dme", "tx2gene.csv"))
+fwrite(tx2gene_dme, file.path(external_dir, "dsi", "tx2gene.csv"))
 
 # read in salmon files and make ddsTxi (gene-level analysis)
 make_ddsTxi <- function(species, tx2gene, sample_rm){

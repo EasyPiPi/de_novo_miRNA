@@ -30,8 +30,11 @@ rule all:
         "indicator/miRDeep2/analyze_miRNA_expression/all.done",
         #### RNA-seq analysis ####
         "indicator/DESeq2/all.done",
+        #### targetScan ####
+        expand("external_resources/{species}/utr3.tab", species = ["dme", "dsi"]),
 
 ##### load rules #####
 include: "rules/download.smk"
 include: "rules/miRDeep2.smk"
 include: "rules/RNAseq.smk"
+include: "rules/targetscan.smk"

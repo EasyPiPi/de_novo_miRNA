@@ -8,9 +8,9 @@ library(GGally)
 root_dir <- '/home/yixin/Desktop/github_repo/de_novo_miRNA'
 
 deseq2_dir <- file.path(root_dir, 'outputs/expression/table')
-exp_dir <- file.path(root_dir, 'Snakemake_projects/miR983_975/output/expression')
-ortholog_dir <- file.path(root_dir, "Snakemake_projects/miR983_975/output/resources/ortholog")
-fig_output_dir <- file.path(root_dir, 'Snakemake_projects/miR983_975/output/miRNA_targets/figure/gene_level')
+# exp_dir <- file.path(root_dir, 'Snakemake_projects/miR983_975/output/expression')
+# ortholog_dir <- file.path(root_dir, "Snakemake_projects/miR983_975/output/resources/ortholog")
+fig_output_dir <- file.path(root_dir, 'outputs/miRNA_targets/figure/gene_level')
 dir.create(fig_output_dir, showWarnings = F, recursive = T)
 
 # read in tables
@@ -18,9 +18,10 @@ files <- list.files(deseq2_dir, pattern = ".csv")
 df_names <- str_split(files, "_DE", simplify = T)[,1]
 
 deseq2_dfs <- map(
-    map(file.path(deseq2_dir, files), read_csv),
-                  ~ .x %>% rename(gene_ID = X1)
-    ) %>%
+    map(file.path(deseq2_dir, files),
+        read_csv, col_types = c(X1 = col_character())),
+    ~ .x %>% rename(gene_ID = X1)
+) %>%
     set_names(df_names)
 
 deseq2_dfs <- tibble(df_name = df_names, deseq2_df = deseq2_dfs)
@@ -28,7 +29,8 @@ deseq2_dfs <- deseq2_dfs %>% separate(df_name, into = c("species", "miRNA"), sep
 
 ################################################################################
 # miRNA targets
-targetscan <- read_delim(file.path(root_dir, "Snakemake_projects/miR983_975/data/targetScan/targetscan_70_miR_983_miR_975_output.txt"), delim = "\t") %>%
+targetscan <-
+    read_delim(file.path(root_dir, "data/targetScan/targetscan_70_miR_983_miR_975_output.txt"), delim = "\t") %>%
     filter(species_ID %in% c(7227, 7240)) %>%
     rename(miRNA_in_this_species = "miRNA in this species")
 
