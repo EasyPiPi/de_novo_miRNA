@@ -7,3 +7,12 @@ rule parse_UTR_sequence:
         utr3_tab = "external_resources/{species}/utr3.tab"
     script:
         "../scripts/targetscan_70/parse_UTR_sequence.R"
+
+rule run_targetscan:
+    input:
+        utr3 = rules.parse_UTR_sequence.output.utr3_tab,
+        miR_seed = config["miR_seed"]
+    output:
+        "outputs/miRNA_targets/table/{species}/targetscan_targets.tab"
+    shell:
+        "scripts/targetscan_70/targetscan_70.pl {input.miR_seed} {input.utr3} {output}"

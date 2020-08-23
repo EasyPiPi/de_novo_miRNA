@@ -8,3 +8,5 @@ tx2gene:
     "ftp://ftp.flybase.org/releases/FB2020_03/precomputed_files/genes/fbgn_fbtr_fbpp_expanded_fb_2020_03.tsv.gz"
 ortholog:
     "ftp://ftp.flybase.org/releases/FB2020_03/precomputed_files/orthologs/dmel_orthologs_in_drosophila_species_fb_2020_03.tsv.gz"
+miR_seed:
+    "external_resources/targetScan/miR_983_975_seed.txt"
