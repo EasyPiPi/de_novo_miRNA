@@ -6,7 +6,6 @@ library(pheatmap)
 library(GGally)
 
 root_dir <- '/home/yixin/Desktop/github_repo/de_novo_miRNA'
-
 deseq2_dir <- file.path(root_dir, 'outputs/expression/table')
 # exp_dir <- file.path(root_dir, 'Snakemake_projects/miR983_975/output/expression')
 # ortholog_dir <- file.path(root_dir, "Snakemake_projects/miR983_975/output/resources/ortholog")
@@ -29,40 +28,47 @@ deseq2_dfs <- deseq2_dfs %>% separate(df_name, into = c("species", "miRNA"), sep
 
 ################################################################################
 # miRNA targets
+species <- c("dme", "dsi")
+targetscan_files <-
+    file.path(root_dir, "outputs/miRNA_targets/table", species, "targetscan_targets.tab")
+
 targetscan <-
-    read_delim(file.path(root_dir, "data/targetScan/targetscan_70_miR_983_miR_975_output.txt"), delim = "\t") %>%
-    filter(species_ID %in% c(7227, 7240)) %>%
-    rename(miRNA_in_this_species = "miRNA in this species")
+    tibble(
+        species = species,
+        df = map(targetscan_files, read_delim,
+                 delim = "\t", col_types = cols(a_Gene_ID = col_character()))
+    )
 
-tx2gene <- read_delim(file.path(exp_dir, "fbgn_fbtr_fbpp_fb_2019_04_hearder_removed.tsv"), col_name = F, delim = "\t")
-tx2gene <- tx2gene[, c(2,1)] %>% rename(tx_ID = X2, gene_ID = X1)
+targetscan <-
+    targetscan %>%
+    mutate(df = map(df, ~ .x %>%
+                        rename(miRNA_in_this_species = "miRNA in this species")))
 
-targetscan <- targetscan %>% left_join(tx2gene, by = c("a_Gene_ID" = "tx_ID"))
+tx2gene <-
+    tibble(
+        species = species,
+        tx2gene = map(file.path(root_dir, "external_resources", species, "tx2gene.csv"),
+                 read_csv, col_types = cols(transcript_id = col_character())))
 
-targetscan_target <- targetscan %>%
-    group_by(species_ID) %>%
-    nest() %>%
-    rename("targetscan_df" = data) %>%
-    ungroup()
+targetscan <-
+    targetscan %>%
+    left_join(tx2gene, by = "species") %>%
+    mutate(df = map2(df, tx2gene, ~ .x %>% left_join(.y, by = c("a_Gene_ID" = "transcript_id"))))
 
 get_targetNum <- function(df) {
     df %>%
-        select(miRNA_family_ID, gene_ID, Site_type) %>%
+        select(miRNA_family_ID, gene_id, Site_type) %>%
         # filter target sites
         # filter_at("Site_type", ~.x %in% c("8mer-1a")) %>%
-        group_by(gene_ID, miRNA_family_ID) %>%
+        group_by(gene_id, miRNA_family_ID) %>%
         count(miRNA_family_ID) %>%
         spread(miRNA_family_ID, n) %>%
         ungroup()
 }
 
 # get miRNA target number per genes
-targetscan_target <- targetscan_target %>%
-    mutate(targetNum = map(targetscan_df, get_targetNum)) %>%
-    mutate(species = case_when(
-        species_ID == 7227 ~ "dme",
-        species_ID == 7240 ~ "dsi"
-    )) %>%
+targetscan_target <- targetscan %>%
+    mutate(targetNum = map(df, get_targetNum)) %>%
     select(species, targetNum)
 
 # group target tyoe by target site number
@@ -75,7 +81,7 @@ get_target_site_gp <- function(df){
 
 plot_dfs <- deseq2_dfs %>%
     left_join(targetscan_target, by = "species") %>%
-    mutate(plot_df = map2(deseq2_df, targetNum, left_join, by = "gene_ID")) %>%
+    mutate(plot_df = map2(deseq2_df, targetNum, left_join, by = c("gene_ID" = "gene_id"))) %>%
     mutate(plot_df = map(plot_df, get_target_site_gp),
            plot_df = map(plot_df, function(df) {
                colnames(df) <- str_replace(colnames(df), "mir", "miR")
