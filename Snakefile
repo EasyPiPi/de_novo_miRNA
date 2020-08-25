@@ -30,7 +30,7 @@ rule all:
         "indicator/miRDeep2/analyze_miRNA_expression/all.done",
         #### RNA-seq analysis ####
         "indicator/DESeq2/all.done",
-        "external_resources/flybase/dmel_dsim_orthologs.csv",
+        "outputs/GO/table/GO.csv",
         #### targetScan ####
         "indicator/targetScan/all.done",
 

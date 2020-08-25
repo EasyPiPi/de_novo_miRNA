@@ -74,3 +74,15 @@ rule get_ortholog:
         dmel_dsim_orthologs = "external_resources/flybase/dmel_dsim_orthologs.csv"
     script:
         "../scripts/RNAseq/get_ortholog.R"
+
+# run GO analysis
+rule run_GO_analysis:
+    input:
+        ortholog = rules.get_ortholog.output,
+        complete = rules.deseq2.output
+    params:
+        root_dir = config["root_dir"]
+    output:
+        go = "outputs/GO/table/GO.csv"
+    script:
+        "../scripts/RNAseq/GO.R"
