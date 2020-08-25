@@ -65,3 +65,12 @@ rule deseq2:
     threads: 4
     script:
         "../scripts/RNAseq/deseq2.R"
+
+# get dmel ortholog for GO and mis-regulated gene analysis
+rule get_ortholog:
+    input:
+        dmel_orthologs = rules.download_flybase_info.output.ortholog
+    output:
+        dmel_dsim_orthologs = "external_resources/flybase/dmel_dsim_orthologs.csv"
+    script:
+        "../scripts/RNAseq/get_ortholog.R"

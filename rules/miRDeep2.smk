@@ -1,16 +1,3 @@
-rule fastqc:
-    input:
-        "raw_data/small_RNAseq/{run}.fastq.gz"
-    output:
-        html="outputs/qc/fastqc/{run}.html",
-        zip="outputs/qc/fastqc/{run}_fastqc.zip"
-    params: ""
-    log:
-        "logs/fastqc/{run}.log"
-    threads: 1
-    wrapper:
-        "0.63.0/bio/fastqc"
-
 rule trimmomatic:
     input:
         "raw_data/small_RNAseq/{run}.fastq.gz"  # input and output can be uncompressed or compressed
@@ -28,6 +15,19 @@ rule trimmomatic:
     threads:4
     wrapper:
         "0.63.0/bio/trimmomatic/se"
+
+rule fastqc:
+    input:
+        rules.trimmomatic.output
+    output:
+        html="outputs/qc/fastqc/{run}.html",
+        zip="outputs/qc/fastqc/{run}_fastqc.zip"
+    params: ""
+    log:
+        "logs/fastqc/{run}.log"
+    threads: 1
+    wrapper:
+        "0.63.0/bio/fastqc"
 
 # rule bowtie_build:
 #     input:
