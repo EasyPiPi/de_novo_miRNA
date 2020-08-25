@@ -31,7 +31,7 @@ rule all:
         #### RNA-seq analysis ####
         "indicator/DESeq2/all.done",
         #### targetScan ####
-        expand("outputs/miRNA_targets/table/{species}/targetscan_targets.tab", species = ["dme", "dsi"]),
+        "indicator/targetScan/all.done",
 
 ##### load rules #####
 include: "rules/download.smk"

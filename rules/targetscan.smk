@@ -16,3 +16,13 @@ rule run_targetscan:
         "outputs/miRNA_targets/table/{species}/targetscan_targets.tab"
     shell:
         "scripts/targetscan_70/targetscan_70.pl {input.miR_seed} {input.utr3} {output}"
+
+rule analyze_miRNA_target_expression:
+    input:
+        expand("outputs/miRNA_targets/table/{species}/targetscan_targets.tab", species = ["dme", "dsi"])
+    params:
+        root_dir = config["root_dir"]
+    output:
+        touch("indicator/targetScan/all.done")
+    script:
+        "../scripts/RNAseq/targetScan_targets_gene_level.R"

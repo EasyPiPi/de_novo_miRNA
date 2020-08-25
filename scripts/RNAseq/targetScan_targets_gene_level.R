@@ -1,14 +1,12 @@
-library(tidyverse)
-library(skimr)
-library(naniar)
-library(RColorBrewer)
-library(pheatmap)
-library(GGally)
+suppressMessages(suppressWarnings(library(tidyverse)))
+suppressMessages(suppressWarnings(library(naniar)))
+suppressMessages(suppressWarnings(library(grid)))
+# library(skimr)
 
-root_dir <- '/home/yixin/Desktop/github_repo/de_novo_miRNA'
+# root_dir <- '/home/yixin/Desktop/github_repo/de_novo_miRNA'
+root_dir <- snakemake@params[["root_dir"]]
+
 deseq2_dir <- file.path(root_dir, 'outputs/expression/table')
-# exp_dir <- file.path(root_dir, 'Snakemake_projects/miR983_975/output/expression')
-# ortholog_dir <- file.path(root_dir, "Snakemake_projects/miR983_975/output/resources/ortholog")
 fig_output_dir <- file.path(root_dir, 'outputs/miRNA_targets/figure/gene_level')
 dir.create(fig_output_dir, showWarnings = F, recursive = T)
 
@@ -48,7 +46,7 @@ tx2gene <-
     tibble(
         species = species,
         tx2gene = map(file.path(root_dir, "external_resources", species, "tx2gene.csv"),
-                 read_csv, col_types = cols(transcript_id = col_character())))
+                      read_csv, col_types = cols(transcript_id = col_character())))
 
 targetscan <-
     targetscan %>%
@@ -73,7 +71,7 @@ targetscan_target <- targetscan %>%
 
 # group target tyoe by target site number
 get_target_site_gp <- function(df){
-    df %>% mutate_at(vars(contains("3p"), contains("5p")), ~case_when(
+    df %>% mutate_at(vars(contains("3p"), contains("5p")), ~ case_when(
         is.na(.) ~ "non-target",
         TRUE ~ "target"
     ))
@@ -81,6 +79,7 @@ get_target_site_gp <- function(df){
 
 plot_dfs <- deseq2_dfs %>%
     left_join(targetscan_target, by = "species") %>%
+    mutate(miRNA_num = str_sub(miRNA, 4)) %>%
     mutate(plot_df = map2(deseq2_df, targetNum, left_join, by = c("gene_ID" = "gene_id"))) %>%
     mutate(plot_df = map(plot_df, get_target_site_gp),
            plot_df = map(plot_df, function(df) {
@@ -88,17 +87,12 @@ plot_dfs <- deseq2_dfs %>%
                return(df)
            } ))
 
-
-# df <- plot_dfs %>%
-#     filter(species == "dme", miRNA == "miR983") %>%
-#     select(plot_df) %>% unnest(plot_df) %>%
-#     rename_all(~str_replace_all(., "-", "_"))
-
 # CDF plot
-get_plots <- function(df, species, miRNA) {
+get_plots <- function(df, species, miRNA, miRNA_num) {
     subdf <- df %>%
         # filter(baseMean > 10) %>%
-        select(log2FoldChange, contains("5p"), contains("3p"))
+        # select mutant miRNA for visualization
+        select(log2FoldChange, contains(miRNA_num))
 
     for (miR_name in colnames(subdf)[2:length(colnames(subdf))]) {
         print(paste(species, miRNA, "KO", miR_name, "target"))
@@ -106,7 +100,7 @@ get_plots <- function(df, species, miRNA) {
         nontarget_vals <- filter(subdf, subdf[[miR_name]] == "non-target")$log2FoldChange
         print(paste("target number:", length(target_vals)))
         print(paste("non-target number:", length(nontarget_vals)))
-        print(ks.test(target_vals, nontarget_vals))
+        print(paste("p value:", ks.test(target_vals, nontarget_vals)$`p.value`))
         # CDF plot
         fig_1 <- subdf %>%
             ggplot(aes(x = log2FoldChange, color = as.factor(subdf[[miR_name]]))) +
@@ -125,7 +119,7 @@ get_plots <- function(df, species, miRNA) {
                    fig_output_dir,
                    str_c(species, "_", miRNA, "KO_", miR_name, "_target_CDF.png")
                ), width = 9, height = 8, units = "cm"
-            )
+        )
 
         fig_2 <- subdf %>%
             ggplot(aes(
@@ -133,23 +127,31 @@ get_plots <- function(df, species, miRNA) {
                 x = as.factor(subdf[[miR_name]]),
                 color = as.factor(subdf[[miR_name]])
             )) +
-            geom_boxplot() +
+            geom_violin() +
+            geom_boxplot(width=0.1) +
             labs(y = expression(log[2]*"(foldchange)"),
                  color = str_replace_all(miR_name, "_", "-")) +
-            ylim(-2, 2) +
+            ylim(-0.5, 0.5) +
+            annotate("text", x = 2.7, y = -0.4, size = 3, hjust = 0,
+                     label = paste("non-target n =", length(nontarget_vals))) +
+            annotate("text", x = 2.7, y = -0.45, size = 3, hjust = 0,
+                     label = paste("target n =", length(target_vals))) +
+            annotate("text", x = 2.7, y = -0.5, size = 3, hjust = 0,
+                     label = "KS test p-value < 1e-5") +
+            coord_cartesian(xlim = c(1, 2),
+                            clip = 'off') +
+            theme_classic() +
             theme(
                 axis.title.x = element_blank(),
                 axis.text.x = element_blank(),
                 axis.ticks.x = element_blank()
-            ) +
-            theme_classic()
+            )
         ggsave(fig_2,
                filename = file.path(
                    fig_output_dir,
                    str_c(species, "_", miRNA, "KO_", miR_name, "_target_boxplot.png")
-               ),
-               scale = 1.2)
+               ), width = 9, height = 8, units = "cm")
     }
 }
 
-pmap(list(plot_dfs$plot_df, plot_dfs$species, plot_dfs$miRNA), get_plots)
+pwalk(list(plot_dfs$plot_df, plot_dfs$species, plot_dfs$miRNA, plot_dfs$miRNA_num), get_plots)
