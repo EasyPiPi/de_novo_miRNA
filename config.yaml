@@ -1,3 +1,4 @@
+# define the root directory for the whole analysis
 root_dir:
     "/home/yixin/Desktop/github_repo/de_novo_miRNA"
 miRBase_mature:

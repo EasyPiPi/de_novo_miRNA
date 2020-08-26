@@ -64,7 +64,7 @@ rule deseq2:
         touch("indicator/DESeq2/all.done")
     threads: 4
     script:
-        "../scripts/RNAseq/deseq2.R"
+        "../scripts/RNAseq/run_deseq2.R"
 
 # get dmel ortholog for GO and mis-regulated gene analysis
 rule get_ortholog:
@@ -85,4 +85,17 @@ rule run_GO_analysis:
     output:
         go = "outputs/GO/table/GO.csv"
     script:
-        "../scripts/RNAseq/GO.R"
+        "../scripts/RNAseq/run_GO.R"
+
+# compare mis-regulated genes between D. mel and D.sim
+rule compare_misregulated_genes:
+    input:
+        ortholog = rules.get_ortholog.output,
+        complete = rules.deseq2.output
+    params:
+        root_dir = config["root_dir"],
+        figure_out_dir = "outputs/misregulated_genes/figure"
+    output:
+        touch("indicator/DESeq2/compare_misregulated_genes.done")
+    script:
+        "../scripts/RNAseq/compare_misregulated_genes.R"

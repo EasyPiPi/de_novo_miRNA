@@ -31,6 +31,7 @@ rule all:
         #### RNA-seq analysis ####
         "indicator/DESeq2/all.done",
         "outputs/GO/table/GO.csv",
+        "indicator/DESeq2/compare_misregulated_genes.done",
         #### targetScan ####
         "indicator/targetScan/all.done",
 

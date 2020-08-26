@@ -5,11 +5,12 @@ channels:
 - conda-forge
 - bioconda
 dependencies:
-- snakemake-minimal
+- snakemake-minimal=5.22.1
 # Python
 - python=3.7
 - pandas
 - numpy
+# - pulp
 - spyder=3.3.6
 # R
 - r-base =3.6.1
@@ -28,6 +29,7 @@ dependencies:
 - r-devtools
 - r-pheatmap
 - r-tidyverse
+- r-venndiagram
 - r-corrr
 - r-skimr
 - r-cowplot

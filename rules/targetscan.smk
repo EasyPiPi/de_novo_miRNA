@@ -25,4 +25,4 @@ rule analyze_miRNA_target_expression:
     output:
         touch("indicator/targetScan/all.done")
     script:
-        "../scripts/RNAseq/targetScan_targets_gene_level.R"
+        "../scripts/RNAseq/analyze_targetScan_targets_gene_level.R"
