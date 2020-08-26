@@ -34,9 +34,12 @@ rule all:
         "indicator/DESeq2/compare_misregulated_genes.done",
         #### targetScan ####
         "indicator/targetScan/all.done",
+        #### phenotype ####
+        "indicator/phenotype/all.done",
 
 ##### load rules #####
 include: "rules/download.smk"
 include: "rules/miRDeep2.smk"
 include: "rules/RNAseq.smk"
 include: "rules/targetscan.smk"
+include: "rules/phenotype.smk"

@@ -36,6 +36,8 @@ dependencies:
 - r-ggpubr
 - r-ggally
 - r-rcolorbrewer
+- r-magick
+- r-rcompanion
 - r-stringi
 - r-seqinr
 - r-naniar
