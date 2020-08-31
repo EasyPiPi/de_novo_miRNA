@@ -177,9 +177,17 @@ mature_prop <- mature_exp %>%
     mutate(across(where(is.numeric), ~ . / sum(.))) %>%
     ungroup()
 
-adaptive_miR <- mature_prop %>%
-    filter(Evolutionary_mode == "adaptive", Age != "0 - 4 Myrs") %>%
+# adaptive_miR <- mature_prop %>%
+#     filter(Evolutionary_mode == "adaptive", Age != "0 - 4 Myrs") %>%
+#     select(-contains("dvi"), -contains("male_body"))
+
+adaptive_miR_young <- mature_prop %>%
+    filter(Evolutionary_mode == "adaptive", Age %in% c("0 - 4 Myrs", "4 - 30 Myrs")) %>%
     select(-contains("dvi"), -contains("male_body"))
+
+adaptive_miR_old <- mature_prop %>%
+    filter(Evolutionary_mode == "adaptive", Age %in% c("30 - 60 Myrs", "60 - 250 Myrs")) %>%
+    select(-contains("male_body"))
 
 conserved_miR <- mature_prop %>%
     filter(Evolutionary_mode == "conservative") %>%
@@ -193,16 +201,34 @@ make_plot_df_2 <- function(df) {
         mutate(species = fct_relevel(species, "dme", "dsi", "dse", "der", "dvi"))
 }
 
-adaptive_miR_plot <- make_plot_df_2(adaptive_miR)
+# adaptive_miR_plot <- make_plot_df_2(adaptive_miR)
+adaptive_miR_young_plot <- make_plot_df_2(adaptive_miR_young)
+adaptive_miR_old_plot <- make_plot_df_2(adaptive_miR_old)
 conserved_miR_plot <- make_plot_df_2(conserved_miR)
 
-# adaptive miRNAs which are annotated in miRBase and detected in more than 3 species
-adaptive_miR_sel <- adaptive_miR_plot %>%
+# # adaptive miRNAs which are annotated in miRBase and detected in more than 3 species
+# adaptive_miR_sel <- adaptive_miR_plot %>%
+#     select(miRNA, species) %>% unique() %>% count(miRNA) %>%
+#     filter(n >= 3) %>% pull(miRNA)
+#
+# p <- adaptive_miR_plot %>%
+#     filter(miRNA %in% adaptive_miR_sel) %>% ggplot() +
+#     geom_point(mapping = aes(x = species, y = rpm, color = arm)) +
+#     geom_hline(yintercept = c(0.75, 0.25), linetype="dashed", color = "grey", size = 1.2) +
+#     facet_wrap("miRNA", nrow = 2) +
+#     labs(x = "Drosophila species",
+#          y = "Proportion") +
+#     scale_color_brewer(palette = "Set2") +
+#     cowplot::theme_cowplot()
+#
+# ggsave(file.path(fig_out, "adaptive_miRNA_5p_3p_proportion.png"), plot = p, width = 10, height = 5)
+
+adaptive_miR_young_sel <- adaptive_miR_young_plot %>%
     select(miRNA, species) %>% unique() %>% count(miRNA) %>%
     filter(n >= 3) %>% pull(miRNA)
 
-p <- adaptive_miR_plot %>%
-    filter(miRNA %in% adaptive_miR_sel) %>% ggplot() +
+p <- adaptive_miR_young_plot %>%
+    filter(miRNA %in% adaptive_miR_young_sel) %>% ggplot() +
     geom_point(mapping = aes(x = species, y = rpm, color = arm)) +
     geom_hline(yintercept = c(0.75, 0.25), linetype="dashed", color = "grey", size = 1.2) +
     facet_wrap("miRNA", nrow = 2) +
@@ -211,7 +237,23 @@ p <- adaptive_miR_plot %>%
     scale_color_brewer(palette = "Set2") +
     cowplot::theme_cowplot()
 
-ggsave(file.path(fig_out, "adaptive_miRNA_5p_3p_proportion.png"), plot = p, width = 10, height = 5)
+ggsave(file.path(fig_out, "adaptive_miRNA_young_5p_3p_proportion.png"), plot = p, width = 6, height = 5)
+
+adaptive_miR_old_sel <- adaptive_miR_old_plot %>%
+    select(miRNA, species) %>% unique() %>% count(miRNA) %>%
+    filter(n >= 3) %>% pull(miRNA)
+
+p <- adaptive_miR_old_plot %>%
+    filter(miRNA %in% adaptive_miR_old_sel) %>% ggplot() +
+    geom_point(mapping = aes(x = species, y = rpm, color = arm)) +
+    geom_hline(yintercept = c(0.75, 0.25), linetype="dashed", color = "grey", size = 1.2) +
+    facet_wrap("miRNA", nrow = 2) +
+    labs(x = "Drosophila species",
+         y = "Proportion") +
+    scale_color_brewer(palette = "Set2") +
+    cowplot::theme_cowplot()
+
+ggsave(file.path(fig_out, "adaptive_miRNA_old_5p_3p_proportion.png"), plot = p, width = 6, height = 5)
 
 # conserved miRNAs which are annotated in miRBase and detected in all 5 species
 conserved_miR_sel_1 <-
