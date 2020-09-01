@@ -80,7 +80,7 @@ invisible(futile.logger::flog.threshold(futile.logger::ERROR, name = "VennDiagra
 
 venn_plot <- venn.diagram(
     x = misregulated_genes,
-    filename = file.path(output_dir, "misregulated_gene_venn.pdf"),
+    filename = file.path(output_dir, "misregulated_gene_venn.tiff"),
     col = "transparent",
     fill = c("cornflowerblue", "green", "yellow", "darkorchid1"),
     alpha = 0.50,
@@ -102,7 +102,7 @@ venn_plot <- venn.diagram(
 # miR-983
 venn.plot <- venn.diagram(
     x = with(misregulated_genes, list(dme_miR983, dsi_miR983)),
-    filename = file.path(output_dir, "misregulated_gene_miR983_venn.pdf"),
+    filename = file.path(output_dir, "misregulated_gene_miR983_venn.tiff"),
     lwd = 4,
     fill = c("cornflowerblue", "darkorchid1"),
     alpha = 0.75,
@@ -122,7 +122,7 @@ venn.plot <- venn.diagram(
 # miR-975
 venn.plot <- venn.diagram(
     x = with(misregulated_genes, list(dme_miR975, dsi_miR975)),
-    filename = file.path(output_dir, "misregulated_gene_miR975_venn.pdf"),
+    filename = file.path(output_dir, "misregulated_gene_miR975_venn.tiff"),
     lwd = 4,
     fill = c("cornflowerblue", "darkorchid1"),
     alpha = 0.75,

@@ -135,6 +135,9 @@ make_plot_df <- function(df) {
 
 precursor_plot <- make_plot_df(precursor_exp)
 
+precursor_plot <-
+    precursor_plot %>% mutate(tissue = str_replace(tissue, "_", " "))
+
 #### global expression for all miRNAs surveyed in Lyu et al. ####
 p <- precursor_plot %>%
     filter(Evolutionary_mode != "transitional") %>%
@@ -156,21 +159,23 @@ p <- precursor_plot %>%
     filter(Evolutionary_mode != "transitional") %>%
     ggplot() +
     geom_boxplot(mapping = aes(x = sample_num, y = log2_rpm)) +
-    geom_jitter(mapping = aes(x = sample_num, y = log2_rpm, color = microRNA), data = precursor_subplot) +
+    geom_jitter(mapping = aes(x = sample_num, y = log2_rpm, color = microRNA), data = precursor_subplot, size = 3) +
     facet_grid(tissue ~ species, scales = "free", space = "free", switch = "y") + # use  to keep same width
     labs(x = "Samples in different species",
          y = expression(log[2]*"(Reads Per Million)")) +
     cowplot::theme_cowplot() +
     theme(axis.text.x = element_blank())
 
-ggsave(file.path(fig_out, "miR983_975_expressions.png"), plot = p, width = 10, height = 6)
+ggsave(file.path(fig_out, "miR983_975_expressions.png"), plot = p, width = 10, height = 4)
 
 #### mature expression ####
 mature_exp <-
     reduce(c(list(class_df), exp_df$df), left_join) %>%
     rename(Evolutionary_mode = "Evolutionary mode") %>%
     mutate(miRNA = str_replace(str_sub(miRNA, start = 5), "mir", "miR")) %>%
-    select(-c(dme, dsi, dse, der, dvi))
+    select(-c(dme, dsi, dse, der, dvi)) %>%
+    # rename miR-983 for visualization
+    mutate(miRNA = str_replace(miRNA, "miR-983-1", "miR-983"))
 
 mature_prop <- mature_exp %>%
     group_by(miRNA) %>%
@@ -193,6 +198,10 @@ conserved_miR <- mature_prop %>%
     filter(Evolutionary_mode == "conservative") %>%
     select(-contains("male_body"))
 
+selected_miR <- mature_prop %>%
+    filter(miRNA %in% c("bantam", "miR-184", "miR-983", "miR-975")) %>%
+    select(-contains("male_body"))
+
 make_plot_df_2 <- function(df) {
     df %>%
         gather(key = "sample", value = "rpm", -c(miRNA, Age, Evolutionary_mode, arm)) %>%
@@ -205,6 +214,7 @@ make_plot_df_2 <- function(df) {
 adaptive_miR_young_plot <- make_plot_df_2(adaptive_miR_young)
 adaptive_miR_old_plot <- make_plot_df_2(adaptive_miR_old)
 conserved_miR_plot <- make_plot_df_2(conserved_miR)
+selected_miR_plot <- make_plot_df_2(selected_miR)
 
 # # adaptive miRNAs which are annotated in miRBase and detected in more than 3 species
 # adaptive_miR_sel <- adaptive_miR_plot %>%
@@ -222,6 +232,18 @@ conserved_miR_plot <- make_plot_df_2(conserved_miR)
 #     cowplot::theme_cowplot()
 #
 # ggsave(file.path(fig_out, "adaptive_miRNA_5p_3p_proportion.png"), plot = p, width = 10, height = 5)
+
+p <- selected_miR_plot %>%
+    ggplot() +
+    geom_point(mapping = aes(x = species, y = rpm, color = arm)) +
+    geom_hline(yintercept = c(0.75, 0.25), linetype="dashed", color = "grey", size = 1.2) +
+    facet_wrap("miRNA", nrow = 1) +
+    labs(x = "Drosophila species",
+         y = "Proportion") +
+    scale_color_brewer(palette = "Set2") +
+    cowplot::theme_cowplot()
+
+ggsave(file.path(fig_out, "selected_miRNA_5p_3p_proportion.png"), plot = p, width = 8, height = 2.5)
 
 adaptive_miR_young_sel <- adaptive_miR_young_plot %>%
     select(miRNA, species) %>% unique() %>% count(miRNA) %>%
