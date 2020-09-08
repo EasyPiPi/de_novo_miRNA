@@ -14,6 +14,7 @@ suppressMessages(library(magick))
 root_dir <- snakemake@params[["root_dir"]]
 output_dir <- snakemake@params[["figure_out_dir"]]
 
+####
 phenotype_dir <- file.path(root_dir, 'data/phenotype')
 dir.create(output_dir, showWarnings = FALSE, recursive = TRUE)
 
@@ -299,10 +300,10 @@ phenotype_fig <- plot_grid(col1, col2, legend1, col3, legend2, col4, nrow = 1,
                            rel_widths = c(1, 1, 0.4, 1, 0.5, 1))
 
 phenotype_fig <- plot_grid(miR_deletion, phenotype_fig, ncol = 1,
-                           rel_heights = c(0.3, 1))
+                           rel_heights = c(0.4, 1))
 
 ggsave(plot = phenotype_fig, file.path(output_dir, "phenotype.png"),
-       width = 34, height = 34, units = "cm")
+       width = 34, height = 40, units = "cm")
 
 # fertility_legend <- get_legend(sperm_competetion_plot(sperm_competetion_dfs$dsim_sperm_competetion_defense, "", FALSE))
 # mating_legend <- get_legend(

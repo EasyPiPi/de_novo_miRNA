@@ -1,4 +1,4 @@
-# Trim adapters
+#### Trim adapters ####
 rule cutadapt:
     input:
         ["raw_data/RNAseq/{sample}_combined_R1.fastq.gz", "raw_data/RNAseq/{sample}_combined_R2.fastq.gz"]
@@ -17,7 +17,7 @@ rule cutadapt:
     wrapper:
         "0.64.0/bio/cutadapt/pe"
 
-# Salmon quantification
+#### Salmon quantification ####
 # Build index
 rule salmon_index:
     input:
