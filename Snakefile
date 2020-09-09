@@ -32,6 +32,7 @@ rule all:
         "indicator/DESeq2/all.done",
         "outputs/GO/table/GO.csv",
         "indicator/DESeq2/compare_misregulated_genes.done",
+        "indicator/hisat2/bam/all.done",
         #### targetScan ####
         "indicator/targetScan/all.done",
         #### phenotype ####

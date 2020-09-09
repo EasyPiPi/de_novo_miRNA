@@ -10,7 +10,7 @@ rule cutadapt:
         # https://cutadapt.readthedocs.io/en/stable/guide.html#adapter-types
         adapters = "-a AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC -A AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT",
         # https://cutadapt.readthedocs.io/en/stable/guide.html#
-        others = "--minimum-length 1 -q 20"
+        others = "--minimum-length 10 -q 20"
     log:
         "logs/cutadapt/{sample}.log"
     threads: 4 # set desired number of threads here
@@ -99,3 +99,62 @@ rule compare_misregulated_genes:
         touch("indicator/DESeq2/compare_misregulated_genes.done")
     script:
         "../scripts/RNAseq/compare_misregulated_genes.R"
+
+#### hisat2 ####
+rule hisat2_index:
+    input:
+        fasta = "external_resources/{species}/genome.fasta"
+    output:
+        directory("external_resources/{species}/hisat2_index")
+    params:
+        prefix = "external_resources/{species}/hisat2_index/genome"
+    log:
+        "logs/hisat2/index/{species}.log"
+    threads: 4
+    wrapper:
+        "0.65.0/bio/hisat2/index"
+
+def get_hisat2_genome_index(wildcards):
+    species = metadata_RNAseq.loc[wildcards.sample, "species"]
+    return os.path.join("external_resources", species + "/hisat2_index/genome")
+
+rule hisat2_align:
+    input:
+        expand("external_resources/{species}/hisat2_index", species = ["dme", "dsi"]),
+        fastq1 = rules.cutadapt.output.fastq1,
+        fastq2 = rules.cutadapt.output.fastq2
+    output:
+        temp("raw_data/tmp/sam/{sample}.sam")
+    threads: 4
+    params:
+        genome = get_hisat2_genome_index,
+        others = ""
+    log:
+        "logs/hisat2/align/{sample}.log"
+    shell:
+        "hisat2 -p {threads} {params.others} -x {params.genome} -1 {input.fastq1} -2 {input.fastq2} -S {output} --summary-file {log}"
+
+#### sort sam files using samtools ####
+rule samtools_sort:
+    input:
+        rules.hisat2_align.output
+    output:
+        "outputs/hisat2/bam/{sample}.bam"
+    threads:4
+    shell:
+        "samtools sort -@ {threads} -o {output} {input}"
+
+rule samtools_build_index:
+    input:
+        rules.samtools_sort.output
+    output:
+        "outputs/hisat2/bam/{sample}.bam.bai"
+    threads:1
+    shell:
+        "samtools index {input} {output}"
+
+rule generate_bam_complete:
+    input:
+        expand("outputs/hisat2/bam/{sample}.bam.bai", sample = metadata_RNAseq.index)
+    output:
+        touch("indicator/hisat2/bam/all.done")

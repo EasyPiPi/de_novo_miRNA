@@ -11,3 +11,7 @@ raw_data/
 Adapter_backup.fa
 mapper_logs/
 nohup\.out
+
+external_resources
+
+raw_data
