@@ -107,6 +107,24 @@ precursor_exp <-
     reduce(c(list(class_df), exp_df$precursor_df), left_join) %>%
     rename(Evolutionary_mode = "Evolutionary mode")
 
+# calculate miRNA expression ranking in D. mel and D. sim
+precursor_percentile <- precursor_exp %>%
+    select(miRNA, Age, Evolutionary_mode, dme, dsi,
+           contains("dme"), contains("dsi"), -contains("male_body")) %>%
+    drop_na()
+
+precursor_percentile_num <-
+    precursor_percentile %>% count(Evolutionary_mode)
+
+precursor_percentile <- precursor_percentile %>%
+    mutate_if(is.numeric, percent_rank) %>%
+    mutate_if(is.numeric, ~ .x >= 0.5) %>%
+    mutate(top50_num = rowSums(.[grep("testes", names(.))]))
+
+precursor_percentile_top50_num <- precursor_percentile %>%
+    filter(top50_num == 8) %>%
+    count(Evolutionary_mode)
+
 make_plot_df <- function(df) {
     plot_df <- df %>%
         select(-c(dme, dsi, dse, der, dvi)) %>%
