@@ -130,7 +130,7 @@ get_plots <- function(df, species, miRNA, miRNA_num) {
             geom_violin() +
             geom_boxplot(width=0.1) +
             labs(y = expression(log[2]*"(foldchange)"),
-                 color = str_replace_all(miR_name, "_", "-")) +
+                 color = bquote(italic(.(str_replace_all(miR_name, "_", "-"))))) +
             ylim(-0.5, 0.5) +
             annotate("text", x = 2.7, y = -0.4, size = 3, hjust = 0,
                      label = paste("non-target n =", length(nontarget_vals))) +

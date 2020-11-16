@@ -255,7 +255,7 @@ map(sperm_competetion_dfs, mean_stat_test2)
 ###############################################################################
 # Cow plot
 # Male fertility + female remating
-miR_deletion <- ggdraw() + draw_image(image_read(file.path(root_dir, "data/miR_sequence/miRNAs_deletion.png")))
+# miR_deletion <- ggdraw() + draw_image(image_read(file.path(root_dir, "data/miR_sequence/miRNAs_deletion.png")))
 
 mating_legend <- get_legend(
     mating_success_dfs$dmel_male_mating_success_with_non_virgin_female %>%
@@ -299,11 +299,11 @@ col4 <- plot_grid(sperm_competetion_miR975_plots$dmel_sperm_competetion_offense,
 phenotype_fig <- plot_grid(col1, col2, legend1, col3, legend2, col4, nrow = 1,
                            rel_widths = c(1, 1, 0.4, 1, 0.5, 1))
 
-phenotype_fig <- plot_grid(miR_deletion, phenotype_fig, ncol = 1,
-                           rel_heights = c(0.4, 1))
+# phenotype_fig <- plot_grid(miR_deletion, phenotype_fig, ncol = 1,
+#                            rel_heights = c(0.4, 1))
 
 ggsave(plot = phenotype_fig, file.path(output_dir, "phenotype.png"),
-       width = 34, height = 40, units = "cm")
+       width = 34, height = 30, units = "cm")
 
 # fertility_legend <- get_legend(sperm_competetion_plot(sperm_competetion_dfs$dsim_sperm_competetion_defense, "", FALSE))
 # mating_legend <- get_legend(
