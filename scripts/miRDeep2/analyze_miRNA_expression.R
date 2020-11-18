@@ -136,12 +136,15 @@ make_plot_df <- function(df) {
         mutate(Category = case_when(
             Age == "0 - 4 Myrs" & Evolutionary_mode == "adaptive" ~ "Adaptive - < 4 Myrs",
             Age == "4 - 30 Myrs" & Evolutionary_mode == "adaptive" ~ "Adaptive - 4 to 30 Myrs",
-            Age %in% c("30 - 60 Myrs", "60 - 250 Myrs", "> 250 Myrs") & Evolutionary_mode == "adaptive" ~ "Adaptive - > 30 Myrs",
-            Age %in% c("30 - 60 Myrs", "60 - 250 Myrs", "> 250 Myrs") & Evolutionary_mode == "conservative" ~ "Conservative - > 30 Myrs",
+            Age %in% c("30 - 60 Myrs", "60 - 250 Myrs", "> 250 Myrs") &
+                Evolutionary_mode == "adaptive" ~ "Adaptive - > 30 Myrs",
+            Age %in% c("30 - 60 Myrs", "60 - 250 Myrs", "> 250 Myrs") &
+                Evolutionary_mode == "conservative" ~ "Conservative - > 30 Myrs",
             TRUE ~ "NA"
         )) %>%
-        mutate(Category = fct_relevel(Category, "Adaptive - < 4 Myrs", "Adaptive - 4 to 30 Myrs",
-                                      "Adaptive - > 30 Myrs", "Conservative - > 30 Myrs")) %>%
+        mutate(Category =
+                   fct_relevel(Category, "Adaptive - < 4 Myrs", "Adaptive - 4 to 30 Myrs",
+                               "Adaptive - > 30 Myrs", "Conservative - > 30 Myrs")) %>%
         mutate(microRNA = case_when(
             str_detect(miRNA, "bantam") ~ "bantam",
             str_detect(miRNA, "mir-184") ~ "miR-184",
@@ -199,6 +202,51 @@ mature_prop <- mature_exp %>%
     group_by(miRNA) %>%
     mutate(across(where(is.numeric), ~ . / sum(.))) %>%
     ungroup()
+
+# analysis for co-expression
+major_prop <-
+    mature_prop %>%
+    group_by(miRNA) %>%
+    summarise_if(is.numeric, max)
+
+major_prop <-
+    major_prop %>%
+    # only analyze testes samples
+    select(miRNA, contains("testes")) %>%
+    mutate_if(is.numeric, ~ .x < 0.75) %>%
+    mutate(lib_n = rowSums(.[, 2:ncol(.)], na.rm = TRUE))
+
+coexp_miRNA <- major_prop %>%
+    filter(lib_n >= 2) %>%
+    select(miRNA) %>%
+    mutate(coexpression = "Y")
+
+# analysis for arm switching
+arm_idx <- mature_prop %>%
+    group_by(miRNA) %>%
+    mutate_if(is.numeric, ~ .x == max(.x)) %>%
+    ungroup() %>%
+    filter(arm == "5p")
+
+arm_idx <- arm_idx %>%
+    select(miRNA, contains("testes")) %>%
+    mutate(n_5p = rowSums(.[, 2:ncol(.)], na.rm = TRUE),
+           n_3p = rowSums(!.[, 2:ncol(.)], na.rm = TRUE))
+
+armswitch_miRNA <- arm_idx %>%
+    filter(n_5p >= 2 & n_3p >= 2) %>%
+    select(miRNA) %>%
+    mutate(arm_switching = "Y")
+
+# generate Table 1 for miRNAs with co-expression or arm switching
+table_1 <-
+    mature_exp %>%
+        select(miRNA, Evolutionary_mode) %>%
+        unique() %>%
+        left_join(coexp_miRNA, by = "miRNA") %>%
+        left_join(armswitch_miRNA, by = "miRNA") %>%
+        filter(Evolutionary_mode %in% c("adaptive", "conservative")) %>%
+        filter(!is.na(coexpression) | !is.na(arm_switching))
 
 # adaptive_miR <- mature_prop %>%
 #     filter(Evolutionary_mode == "adaptive", Age != "0 - 4 Myrs") %>%

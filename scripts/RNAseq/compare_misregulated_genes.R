@@ -138,3 +138,70 @@ venn.plot <- venn.diagram(
     cat.pos = c(-10, 0),
     category.names = c(expression(italic('dme-mir-975')), expression(italic('dsi-mir-975')))
 )
+
+# permutation test to determine significance
+deseq2_dfs$misregulated_n <-
+    map_dbl(
+        map(
+            deseq2_dfs$deseq2_df,
+            ~ .x %>% count(significant)),
+        ~ .x %>% filter(significant == "misregulated") %>% pull(n)
+    )
+
+set.seed(1234)
+deseq2_dfs <-
+    deseq2_dfs %>%
+    mutate(simulated_mx = map2(deseq2_df, misregulated_n,
+                               ~ replicate(1000, sample(.x$gene_ID, .y))))
+
+miR975_overlap_n <-
+    map_dbl(1:1000, ~ length(
+        intersect(
+            deseq2_dfs$simulated_mx$dme_miR975[, .x],
+            deseq2_dfs$simulated_mx$dsi_miR975[, .x]
+        )
+    ))
+
+miR975_overlap_p <- sum(miR975_overlap_n <= 51) / 1000
+
+miR983_overlap_n <-
+    map_dbl(1:1000, ~ length(
+        intersect(
+            deseq2_dfs$simulated_mx$dme_miR983[, .x],
+            deseq2_dfs$simulated_mx$dsi_miR983[, .x]
+        )
+    ))
+
+miR983_overlap_p <- sum(miR983_overlap_n <= 105) / 1000
+
+# # hypergeometric distribution
+# miR975_intersect <-
+#     intersect(
+#         deseq2_dfs$deseq2_df$dme_miR975$gene_ID,
+#         deseq2_dfs$deseq2_df$dsi_miR975$gene_ID
+#     )
+#
+# miR983_intersect <-
+#     intersect(
+#         deseq2_dfs$deseq2_df$dme_miR983$gene_ID,
+#         deseq2_dfs$deseq2_df$dsi_miR983$gene_ID
+#     )
+#
+# miR975_deseqdf <-
+#     deseq2_dfs %>%
+#     filter(miRNA == "miR975") %>%
+#     mutate(deseq2_df = map(deseq2_df, ~ .x %>% filter(gene_ID %in% miR975_intersect))) %>%
+#     pull(deseq2_df)
+#
+# miR983_deseqdf <-
+#     deseq2_dfs %>%
+#     filter(miRNA == "miR983") %>%
+#     mutate(deseq2_df = map(deseq2_df, ~ .x %>% filter(gene_ID %in% miR983_intersect))) %>%
+#     pull(deseq2_df)
+#
+# map(miR975_deseqdf, ~ .x %>% count(significant))
+# map(miR983_deseqdf, ~ .x %>% count(significant))
+#
+# sum(dhyper(0:51, 1604, 10896 - 1604, 337))
+# sum(dhyper(0:105, 786, 10873 - 786, 1085))
+
